@@ -72,7 +72,7 @@ public class FFmpeg {
 	/**
 	 *
 	 * @param output     output file
-	 * @param sources    full path filenames to source videos that will be merged
+	 * @param sources    absolute path filenames to source videos that will be merged
 	 * @return
 	 * @throws IOException
 	 */
