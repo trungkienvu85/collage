@@ -16,10 +16,12 @@ import java.util.List;
 
 public class FFmpeg {
 
-	// ToDo async class or not? i.e. where should synchronizing should be done at? here or at the app level?
 
 	private static final String TAG = "FFmpeg";
 	private static final String EXEC_FILE_NAME = "ffmpeg";
+
+	// ToDo async class or not? i.e. where should synchronizing should be done at? here or at the app level?
+
 
 	private final Context mContext;
 	private String mExecPath;
