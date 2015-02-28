@@ -13,7 +13,7 @@ import java.util.List;
 // ToDo async class or not? i.e. where should synchronizing be done at? here or at the app level?
 	// I'd say here.
 // ToDo kur daryt error checkinga? FFmpeg'e ar MainActivity?
-	// Solvable errors, e.g. merge failed, should try another method - should be done here
+	// Solvable errors, e.g. concat failed, should try another method - should be done here
 	// If all else fails just throw it back onto the activity for the user to see.
 
 public class Ffmpeg extends Executable {
@@ -35,12 +35,12 @@ public class Ffmpeg extends Executable {
 	 * @return
 	 * @throws IOException
 	 */
-	public int merge(File output, String ...sources)
+	public int concat(File output, String... sources)
 			throws IOException, InterruptedException, IllegalStateException {
 		// Prepare a temporary file containing source video list
 		File tmpFile = File.createTempFile("collage", null); // empty collage.tmp is created
 		if (sources.length < 2) {
-			throw new IllegalStateException("Must provide at least 2 videos to merge!");
+			throw new IllegalStateException("Must provide at least 2 videos to concat!");
 		}
 		String sourceList = "";
 		for (String source : sources) {
