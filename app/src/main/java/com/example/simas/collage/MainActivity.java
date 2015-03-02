@@ -1,11 +1,14 @@
 package com.example.simas.collage;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.res.AssetFileDescriptor;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -13,13 +16,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
+// First start ir po updeito reik deletint senus ir irasyt naujus executables'us
 
 public class MainActivity extends ActionBarActivity
 		implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
 
+	private static final String TAG = "MainActivity";
 	/**
 	 * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
 	 */
@@ -44,11 +51,33 @@ public class MainActivity extends ActionBarActivity
 				R.id.navigation_drawer,
 				(DrawerLayout) findViewById(R.id.drawer_layout));
 
+//		try {
+//			AssetFileDescriptor afd = getAssets().openFd("ffmpeg");
+//		} catch (FileNotFoundException e) {
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+
 		try {
 			Ffmpeg ffmpeg = new Ffmpeg(this);
+//			ffmpeg.concat(new File("output"), "video1.mp4", "video2.mp4");
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
+		} catch (CollageException e) {
+			Log.e(TAG, "Error with " + e.getExtra(), e);
+			new AlertDialog.Builder(this)
+					.setTitle(getString(R.string.error))
+					.setMessage(e.getMessage())
+					.show();
+		}// catch (InterruptedException e) {
+//			Log.e(TAG, "Error!", e);
+//			new AlertDialog.Builder(this)
+//					.setTitle(getString(R.string.error))
+//					.setMessage(getString(R.string.formatted_action_interrupted,
+//							getString(R.string.concatenation)))
+//					.show();
+//		}
 	}
 
 	@Override

@@ -24,7 +24,7 @@ public class Ffmpeg extends Executable {
 	/**
 	 * @param ctx
 	 */
-	public Ffmpeg(Context ctx) throws IOException {
+	public Ffmpeg(Context ctx) throws IOException, CollageException {
 		super(ctx, NAME);
 	}
 
@@ -36,17 +36,20 @@ public class Ffmpeg extends Executable {
 	 * @throws IOException
 	 */
 	public int concat(File output, String... sources)
-			throws IOException, InterruptedException, IllegalStateException {
+			throws IOException, CollageException, InterruptedException {
 		// Prepare a temporary file containing source video list
 		File tmpFile = File.createTempFile("collage", null); // empty collage.tmp is created
 		if (sources.length < 2) {
-			throw new IllegalStateException("Must provide at least 2 videos to concat!");
+			throw new CollageException(getString(R.string.at_least_2_videos));
 		}
 		String sourceList = "";
 		for (String source : sources) {
 			sourceList += String.format("file '%s'\n", source);
 		}
 		Utils.copyBytes(sourceList.getBytes(), tmpFile);
+
+		// ToDo check if files: output, sources[], tmpFile exist
+			// otherwise prevent non-existant files to be selected via the UI
 
 		List<String> args = new ArrayList<>();
 		// Executable

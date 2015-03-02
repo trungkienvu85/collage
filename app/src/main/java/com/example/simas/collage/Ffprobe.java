@@ -1,7 +1,6 @@
 package com.example.simas.collage;
 
 import android.content.Context;
-
 import java.io.IOException;
 
 /**
@@ -15,7 +14,7 @@ public class Ffprobe extends Executable {
 	/**
 	 * @param ctx
 	 */
-	public Ffprobe(Context ctx) throws IOException {
+	public Ffprobe(Context ctx) throws IOException, CollageException {
 		super(ctx, NAME);
 	}
 

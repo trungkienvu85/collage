@@ -1,9 +1,11 @@
 package com.example.simas.collage;
 
 import android.content.Context;
-import android.content.res.AssetFileDescriptor;
+import android.util.Log;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Created by Simas Abramovas on 2015 Feb 28.
@@ -11,8 +13,9 @@ import java.io.IOException;
 
 public abstract class Executable {
 
+	private static final String TAG = "Executable";
 	private final Context mContext;
-	private final String mExecPath; // ToDo rename final?
+	private final File mExec;// ToDo rename final?
 	private final File mAppDir;
 	private final String mName;
 
@@ -21,43 +24,56 @@ public abstract class Executable {
 	 * @param ctx
 	 * @param name    the name of the asset file
 	 */
-	protected Executable(Context ctx, String name) throws IOException {
+	protected Executable(Context ctx, String name)
+			throws CollageException, IOException {
 		mContext = ctx;
 		mAppDir = new File(getContext().getApplicationInfo().dataDir);
 		mName = name;
-		mExecPath = mAppDir + File.separator + mName;
-		File exec = new File(getPath());
-		if (!exec.exists()) {
+		mExec = new File(mAppDir + File.separator + mName);
+		if (!mExec.exists()) {
 			install();
 		}
 	}
 
-	private void install() throws IOException {
+	protected final String getString(int res) {
+		return getContext().getString(res);
+	}
+
+	protected final String getString(int res, Object... formatArgs) {
+		return getContext().getString(res);
+	}
+
+	private void install() throws CollageException, IOException {
 		File exec = new File(getPath());
 
-		AssetFileDescriptor afd = getContext().getAssets().openFd(getName());
+		InputStream is;
+		try {
+			is = getContext().getAssets().open(getName());
+		} catch (FileNotFoundException e) {
+			throw new CollageException(getString(R.string.app_data_not_found), getName());
+		} // Other IOExceptions will be thrown to the caller
 
 		// Create parent dir if doesn't exist
 		if (!getParentDir().exists()) {
 			if (!getParentDir().mkdirs()) {
-				throw new IllegalStateException("Data directory must exist, or be creatable!");
+				throw new IOException(getString(R.string.app_dir_creation_failed));
 			}
 		}
 
 		// Check if there's enough space
-		long freeSpace = getParentDir().getFreeSpace() / 1024 / 1024;	// in Mb
-		long assetSize = afd.getLength() / 1024 / 1024;			        // in Mb
-		if (assetSize <= 0 && freeSpace <= 0 && freeSpace <= assetSize) {
-			throw new IllegalStateException("Data directory doesn't have enough space!");
+		long freeSpace = getParentDir().getFreeSpace()  / 1024 / 1024;  // in Mb
+		long estimatedAssetSize = is.available()       / 1024 / 1024;  // in Mb
+		if (freeSpace <= 0 && freeSpace <= estimatedAssetSize) {
+			throw new CollageException(getString(R.string.app_dir_no_space));
 		}
 
-		if (!exec.createNewFile()) {
-			throw new IOException("Executable file creation failed!");
+		if (!mExec.createNewFile()) {
+			Log.d(TAG, "File existed when it shouldn't have!");
 		}
 		Utils.copyAsset(getContext(), getName(), getPath());
 
 		if (!exec.setExecutable(true)) {
-			throw new IOException("Marking file as executing failed!");
+			throw new IOException("Marking file as executable failed!");
 		}
 	}
 
@@ -66,7 +82,7 @@ public abstract class Executable {
 	}
 
 	protected final String getPath() {
-		return mExecPath;
+		return mExec.getPath();
 	}
 
 	protected final File getParentDir() {
