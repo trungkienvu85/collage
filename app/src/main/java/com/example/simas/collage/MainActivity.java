@@ -16,11 +16,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
 
+import org.xml.sax.InputSource;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 
-// First start ir po updeito reik deletint senus ir irasyt naujus executables'us
+// ToDo First run/Update = reik rewritint executables'us = reinstall method?
 
 public class MainActivity extends ActionBarActivity
 		implements NavigationDrawerFragment.NavigationDrawerCallbacks {
@@ -59,25 +63,29 @@ public class MainActivity extends ActionBarActivity
 //			e.printStackTrace();
 //		}
 
-		try {
-			Ffmpeg ffmpeg = new Ffmpeg(this);
-//			ffmpeg.concat(new File("output"), "video1.mp4", "video2.mp4");
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (CollageException e) {
-			Log.e(TAG, "Error with " + e.getExtra(), e);
-			new AlertDialog.Builder(this)
-					.setTitle(getString(R.string.error))
-					.setMessage(e.getMessage())
-					.show();
-		}// catch (InterruptedException e) {
+//		try {
+//			Ffmpeg ffmpeg = new Ffmpeg(this);
+////			ffmpeg.concat(new File("output"), "video1.mp4", "video2.mp4");
+//		} catch (IOException e) {
 //			Log.e(TAG, "Error!", e);
 //			new AlertDialog.Builder(this)
 //					.setTitle(getString(R.string.error))
-//					.setMessage(getString(R.string.formatted_action_interrupted,
-//							getString(R.string.concatenation)))
+//					.setMessage("Concatenation failed! Please try again.")
 //					.show();
-//		}
+//		} catch (CollageException e) {
+//			Log.e(TAG, "Error with " + e.getExtra(), e);
+//			new AlertDialog.Builder(this)
+//					.setTitle(getString(R.string.error))
+//					.setMessage(e.getMessage())
+//					.show();
+//		}// catch (InterruptedException e) {
+////			Log.e(TAG, "Error!", e);
+////			new AlertDialog.Builder(this)
+////					.setTitle(getString(R.string.error))
+////					.setMessage(getString(R.string.formatted_action_interrupted,
+////							getString(R.string.concatenation)))
+////					.show();
+////		}
 	}
 
 	@Override

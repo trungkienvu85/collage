@@ -23,5 +23,4 @@
 	<string name="formatted_action_interrupted">%s was interrupted! Please try again.</string>
 	<string name="at_least_2_videos">Must provide at least 2 videos!</string>
 	<string name="error">Error</string>
-
 </resources>

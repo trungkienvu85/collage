@@ -1,6 +1,7 @@
 package com.example.simas.collage;
 
 import android.content.Context;
+import android.os.Looper;
 import android.util.Log;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -24,8 +25,8 @@ public abstract class Executable {
 	 * @param ctx
 	 * @param name    the name of the asset file
 	 */
-	protected Executable(Context ctx, String name)
-			throws CollageException, IOException {
+	protected Executable(Context ctx, String name) throws CollageException, IOException {
+		preventWorkOnUiThread(); // Prevent executable creation on the UI thread
 		mContext = ctx;
 		mAppDir = new File(getContext().getApplicationInfo().dataDir);
 		mName = name;
@@ -35,11 +36,13 @@ public abstract class Executable {
 		}
 	}
 
-	protected final String getString(int res) {
-		return getContext().getString(res);
+	protected final void preventWorkOnUiThread() {
+		if (Looper.myLooper() == Looper.getMainLooper()) {
+			throw new IllegalStateException("Cannot work with an executable on the UI thread!");
+		}
 	}
 
-	protected final String getString(int res, Object... formatArgs) {
+	protected final String getString(int res) {
 		return getContext().getString(res);
 	}
 
@@ -62,7 +65,7 @@ public abstract class Executable {
 
 		// Check if there's enough space
 		long freeSpace = getParentDir().getFreeSpace()  / 1024 / 1024;  // in Mb
-		long estimatedAssetSize = is.available()       / 1024 / 1024;  // in Mb
+		long estimatedAssetSize = is.available()        / 1024 / 1024;  // in Mb
 		if (freeSpace <= 0 && freeSpace <= estimatedAssetSize) {
 			throw new CollageException(getString(R.string.app_dir_no_space));
 		}

@@ -10,12 +10,6 @@ import java.util.List;
  * Created by Simas Abramovas on 2015 Feb 28.
  */
 
-// ToDo async class or not? i.e. where should synchronizing be done at? here or at the app level?
-	// I'd say here.
-// ToDo kur daryt error checkinga? FFmpeg'e ar MainActivity?
-	// Solvable errors, e.g. concat failed, should try another method - should be done here
-	// If all else fails just throw it back onto the activity for the user to see.
-
 public class Ffmpeg extends Executable {
 
 	private static final String TAG = "FFmpeg";
@@ -30,13 +24,22 @@ public class Ffmpeg extends Executable {
 
 	/**
 	 *
-	 * @param output     output file
+	 * @param output     output file (that already exist)
 	 * @param sources    absolute path filenames to source videos that will be merged
 	 * @return
 	 * @throws IOException
 	 */
-	public int concat(File output, String... sources)
-			throws IOException, CollageException, InterruptedException {
+	public int concat(File output, String... sources) throws IOException, CollageException,
+			InterruptedException {
+		preventWorkOnUiThread();
+
+		if (!output.exists()) {
+			// ToDo rodyt useriui kad output failas neegzistuoja? Sita sutvarkyt kai bus UI,
+				// tada bus aiskiau kaip parenkami i/o failai
+			if (!output.mkdirs() || !output.createNewFile()) {
+				throw new IOException("The output file doesn't exist and couldn't be created!");
+			}
+		}
 		// Prepare a temporary file containing source video list
 		File tmpFile = File.createTempFile("collage", null); // empty collage.tmp is created
 		if (sources.length < 2) {
@@ -49,7 +52,7 @@ public class Ffmpeg extends Executable {
 		Utils.copyBytes(sourceList.getBytes(), tmpFile);
 
 		// ToDo check if files: output, sources[], tmpFile exist
-			// otherwise prevent non-existant files to be selected via the UI
+			// otherwise prevent non-existent files to be selected via the UI
 
 		List<String> args = new ArrayList<>();
 		// Executable
