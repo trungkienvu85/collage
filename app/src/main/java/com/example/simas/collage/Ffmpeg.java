@@ -4,6 +4,7 @@ import android.content.Context;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -37,12 +38,13 @@ public class Ffmpeg extends Executable {
 			// ToDo rodyt useriui kad output failas neegzistuoja? Sita sutvarkyt kai bus UI,
 				// tada bus aiskiau kaip parenkami i/o failai
 			if (!output.mkdirs() || !output.createNewFile()) {
-				throw new IOException("The output file doesn't exist and couldn't be created!");
+				throw new IOException("The output file doesn't exist and couldn't be created!" +
+						output.getPath());
 			}
 		}
 		// Prepare a temporary file containing source video list
 		File tmpFile = File.createTempFile("collage", null); // empty collage.tmp is created
-		if (sources.length < 2) {
+		if (sources == null || sources.length < 2) {
 			throw new CollageException(getString(R.string.at_least_2_videos));
 		}
 		String sourceList = "";

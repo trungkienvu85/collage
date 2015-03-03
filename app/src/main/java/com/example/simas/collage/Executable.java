@@ -3,10 +3,13 @@ package com.example.simas.collage;
 import android.content.Context;
 import android.os.Looper;
 import android.util.Log;
+
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 
 /**
  * Created by Simas Abramovas on 2015 Feb 28.
@@ -73,11 +76,23 @@ public abstract class Executable {
 		if (!mExec.createNewFile()) {
 			Log.d(TAG, "File existed when it shouldn't have!");
 		}
-		Utils.copyAsset(getContext(), getName(), getPath());
+		Utils.copyAsset(getContext(), getName(), getExec().getParent());
 
 		if (!exec.setExecutable(true)) {
 			throw new IOException("Marking file as executable failed!");
 		}
+	}
+
+	protected final String getProcessOutput(Process process) throws IOException {
+		String output = null;
+		if (process.exitValue() == 0) {
+			output = Utils.readStream(process.getInputStream());
+			Log.d(TAG, "Output: \n" + output);
+		} else {
+			Log.e(TAG, "Error: \n" + Utils.readStream(process.getErrorStream()));
+		}
+
+		return output;
 	}
 
 	public final String getName() {
@@ -86,6 +101,10 @@ public abstract class Executable {
 
 	protected final String getPath() {
 		return mExec.getPath();
+	}
+
+	protected final File getExec() {
+		return mExec;
 	}
 
 	protected final File getParentDir() {

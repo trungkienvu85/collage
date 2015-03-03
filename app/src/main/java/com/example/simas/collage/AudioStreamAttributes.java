@@ -5,24 +5,25 @@ import android.util.Log;
 /**
  * Created by Simas Abramovas on 2015 Mar 02.
  */
+
+// ToDo language attribute
+
 public class AudioStreamAttributes extends StreamAttributes {
 
-	private int mChannelCount;
+	private Integer mChannelCount, mSampleRate;
 
 	private AudioStreamAttributes() { /* Prevent default construction */ }
 
-	public int getChannelCount() {
+	public Integer getChannelCount() {
 		return mChannelCount;
+	}
+	public Integer getSampleRate() {
+		return mSampleRate;
 	}
 
 	public static class Builder {
 
 		private AudioStreamAttributes mAsa = new AudioStreamAttributes();
-
-		public Builder setCodecType(int type) {
-			mAsa.mCodecType = type;
-			return this;
-		}
 
 		public Builder setCodecName(String name) {
 			mAsa.mCodecName = name;
@@ -34,8 +35,18 @@ public class AudioStreamAttributes extends StreamAttributes {
 			return this;
 		}
 
-		protected Builder setChannelCount(int channelCount) {
+		public Builder setDuration(Double duration) {
+			mAsa.mDuration = duration;
+			return this;
+		}
+
+		protected Builder setChannelCount(Integer channelCount) {
 			mAsa.mChannelCount = channelCount;
+			return this;
+		}
+
+		protected Builder setSampleRate(Integer sampleRate) {
+			mAsa.mSampleRate = sampleRate;
 			return this;
 		}
 

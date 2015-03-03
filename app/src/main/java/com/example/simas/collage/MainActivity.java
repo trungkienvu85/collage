@@ -2,7 +2,9 @@ package com.example.simas.collage;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.res.AssetFileDescriptor;
+import android.os.Environment;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
@@ -16,15 +18,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
 
-import org.xml.sax.InputSource;
-
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 
-// ToDo First run/Update = reik rewritint executables'us = reinstall method?
+// ToDo first-run/update => re-write executables => reinstall method
 
 public class MainActivity extends ActionBarActivity
 		implements NavigationDrawerFragment.NavigationDrawerCallbacks {
@@ -63,29 +60,53 @@ public class MainActivity extends ActionBarActivity
 //			e.printStackTrace();
 //		}
 
-//		try {
-//			Ffmpeg ffmpeg = new Ffmpeg(this);
-////			ffmpeg.concat(new File("output"), "video1.mp4", "video2.mp4");
-//		} catch (IOException e) {
-//			Log.e(TAG, "Error!", e);
-//			new AlertDialog.Builder(this)
-//					.setTitle(getString(R.string.error))
-//					.setMessage("Concatenation failed! Please try again.")
-//					.show();
-//		} catch (CollageException e) {
-//			Log.e(TAG, "Error with " + e.getExtra(), e);
-//			new AlertDialog.Builder(this)
-//					.setTitle(getString(R.string.error))
-//					.setMessage(e.getMessage())
-//					.show();
-//		}// catch (InterruptedException e) {
-////			Log.e(TAG, "Error!", e);
-////			new AlertDialog.Builder(this)
-////					.setTitle(getString(R.string.error))
-////					.setMessage(getString(R.string.formatted_action_interrupted,
-////							getString(R.string.concatenation)))
-////					.show();
-////		}
+		HandlerThread thread = new HandlerThread("MyHandlerThread");
+		thread.start();
+		Handler handler = new Handler(thread.getLooper());
+		handler.post(new Runnable() {
+			@Override
+			public void run() {
+				try {
+//					String appDir = Environment
+//							.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/tmps";
+//					Utils.copyAsset(MainActivity.this, "1.mp4", appDir);
+//					File video = new File(appDir + File.separator + "1.mp4");
+
+					File video = new File(Environment
+							.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES) +
+							"/f.mkv");
+
+					Ffprobe ffprobe = new Ffprobe(MainActivity.this);
+					Ffprobe.Attributes attrs = ffprobe.getAttributesForVideo(video);
+					Log.e(TAG, "Stream count: " + attrs.streams.size());
+					for (StreamAttributes attr : attrs.streams) {
+						Log.e(TAG, "Codec: " + attr.mCodecLongName);
+					}
+
+//					Ffmpeg ffmpeg = new Ffmpeg(this);
+//					ffmpeg.concat(new File("output"), "video1.mp4", "video2.mp4");
+				} catch (IOException e) {
+					Log.e(TAG, "Error!", e);
+					new AlertDialog.Builder(MainActivity.this)
+							.setTitle(getString(R.string.error))
+							.setMessage("Probe failed! Please try again.")
+							.show();
+				} catch (CollageException e) {
+					Log.e(TAG, "Error with " + e.getExtra(), e);
+					new AlertDialog.Builder(MainActivity.this)
+							.setTitle(getString(R.string.error))
+							.setMessage(e.getMessage())
+							.show();
+				} catch (InterruptedException e) {
+					Log.e(TAG, "Error!", e);
+					new AlertDialog.Builder(MainActivity.this)
+							.setTitle(getString(R.string.error))
+							.setMessage(getString(R.string.formatted_action_interrupted,
+									getString(R.string.concatenation)))
+							.show();
+				}
+			}
+		});
 	}
 
 	@Override

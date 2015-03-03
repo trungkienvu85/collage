@@ -2,11 +2,16 @@ package com.example.simas.collage;
 
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.text.TextUtils;
+import android.util.Log;
+
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 
 /**
@@ -26,9 +31,14 @@ public class Utils {
 		}
 	}
 
-	public static void copyBytes(InputStream is, String destinationFile) throws IOException {
-		File destination = new File(destinationFile);
-		OutputStream os = new FileOutputStream(destination);
+	/**
+	 *
+	 * @param is
+	 * @param destinationFile    must already exist
+	 * @throws IOException
+	 */
+	public static void copyBytes(InputStream is, File destinationFile) throws IOException {
+		OutputStream os = new FileOutputStream(destinationFile);
 		copyBytes(is, os);
 	}
 
@@ -46,14 +56,38 @@ public class Utils {
 	/**
 	 * Will use {@code destinationPath/assetFileName} as the output file
 	 * @param ctx                Current application's context, used for asset fetching
-	 * @param assetName      Asset name
-	 * @param destination    Absolute path to the output directory
+	 * @param assetName          Asset name
+	 * @param destinationDir     Absolute path to the output directory
 	 */
-	public static void copyAsset(Context ctx, String assetName, String destination)
+	public static void copyAsset(Context ctx, String assetName, String destinationDir)
 			throws IOException {
 		AssetManager assetManager = ctx.getAssets();
 		InputStream is = assetManager.open(assetName);
-		copyBytes(is, destination + "/" + assetName);
+		File destinationFile = new File(destinationDir + File.separator + assetName);
+		if (!destinationFile.exists()) {
+			if (!destinationFile.mkdirs() || !destinationFile.createNewFile()) {
+				throw new IOException("The destination file doesn't exist and couldn't be" +
+						"created! " + destinationFile.getPath());
+			}
+		}
+		copyBytes(is, destinationFile);
+	}
+
+	/**
+	 * Blocking method that will read InputStream to a string and return it
+	 * @param is    InputStream from which data will be read
+	 * @return null or a String containing the data that was read
+	 * @throws IOException
+	 */
+	public static String readStream(InputStream is) throws IOException {
+		BufferedReader reader;
+		String output = "", line;
+			reader = new BufferedReader(new InputStreamReader(is));
+			while ((line = reader.readLine()) != null) {
+				output += line + '\n';
+			}
+
+		return TextUtils.isEmpty(output) ? null : output;
 	}
 
 }

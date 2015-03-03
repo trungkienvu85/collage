@@ -5,17 +5,16 @@ package com.example.simas.collage;
  */
 public class VideoStreamAttributes extends StreamAttributes {
 
-	private int mWidth;
-	private int mHeight;
+	private Integer mWidth, mHeight;
 	private String mAspectRatio;
 
 	private VideoStreamAttributes() { /* Prevent default construction */ }
 
-	public int getWidth() {
+	public Integer getWidth() {
 		return mWidth;
 	}
 
-	public int getHeight() {
+	public Integer getHeight() {
 		return mHeight;
 	}
 
@@ -27,14 +26,6 @@ public class VideoStreamAttributes extends StreamAttributes {
 
 		private VideoStreamAttributes mVsa = new VideoStreamAttributes();
 
-		// ToDo No need for type since there's 2 separate classes. Or are there other types?
-			// ’v’ for video, ’a’ for audio, ’s’ for subtitle, ’d’ for data, and ’t’ for attachments
-		// ToDo maybe 2 separate classes is an overkill? What about subtitle stream?
-		public Builder setCodecType(int type) {
-			mVsa.mCodecType = type;
-			return this;
-		}
-
 		public Builder setCodecName(String name) {
 			mVsa.mCodecName = name;
 			return this;
@@ -45,7 +36,12 @@ public class VideoStreamAttributes extends StreamAttributes {
 			return this;
 		}
 
-		protected Builder setSize(int width, int height) {
+		public Builder setDuration(Double duration) {
+			mVsa.mDuration = duration;
+			return this;
+		}
+
+		protected Builder setSize(Integer width, Integer height) {
 			mVsa.mWidth = width;
 			mVsa.mHeight = height;
 			return this;
