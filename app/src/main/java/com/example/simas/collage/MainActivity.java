@@ -14,9 +14,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
+import android.widget.Button;
 
 import java.io.File;
 import java.io.IOException;
@@ -63,7 +65,7 @@ public class MainActivity extends ActionBarActivity
 		HandlerThread thread = new HandlerThread("MyHandlerThread");
 		thread.start();
 		Handler handler = new Handler(thread.getLooper());
-		handler.post(new Runnable() {
+		Runnable task = new Runnable() {
 			@Override
 			public void run() {
 				try {
@@ -75,6 +77,8 @@ public class MainActivity extends ActionBarActivity
 					File video = new File(Environment
 							.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES) +
 							"/f.mkv");
+
+
 
 					Ffprobe ffprobe = new Ffprobe(MainActivity.this);
 					Ffprobe.Attributes attrs = ffprobe.getAttributesForVideo(video);
@@ -106,7 +110,8 @@ public class MainActivity extends ActionBarActivity
 							.show();
 				}
 			}
-		});
+		};
+//		handler.post(task);
 	}
 
 	@Override

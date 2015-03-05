@@ -1,5 +1,8 @@
 package com.example.simas.collage;
 
+import android.content.Context;
+import android.database.Cursor;
+import android.graphics.Color;
 import android.support.v7.app.ActionBarActivity;
 import android.app.Activity;
 import android.support.v7.app.ActionBar;
@@ -19,8 +22,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.BaseExpandableListAdapter;
+import android.widget.ExpandableListAdapter;
+import android.widget.ExpandableListView;
 import android.widget.ListView;
+import android.widget.SimpleCursorTreeAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Fragment used for managing interactions for and presentation of a navigation drawer.
@@ -97,16 +111,16 @@ public class NavigationDrawerFragment extends Fragment {
 				selectItem(position);
 			}
 		});
-		mDrawerListView.setAdapter(new ArrayAdapter<String>(
-				getActionBar().getThemedContext(),
-				android.R.layout.simple_list_item_1,
-				android.R.id.text1,
-				new String[]{
-						getString(R.string.title_section1),
-						getString(R.string.title_section2),
-						getString(R.string.title_section3),
-				}));
-		mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
+		// Populate the drawer
+		ExpandableListView elv = (ExpandableListView) getActivity()
+				.findViewById(R.id.expandable_list_view);
+
+		View header = getLayoutInflater(null).inflate(R.layout.elv_header, null);
+		elv.addHeaderView(header);
+
+		MenuAdapter menuAdapter = new MenuAdapter();
+		menuAdapter.changeGroups("stream1", "effect", "stream2");
+		elv.setAdapter(menuAdapter);
 		return mDrawerListView;
 	}
 
@@ -279,4 +293,110 @@ public class NavigationDrawerFragment extends Fragment {
 		 */
 		void onNavigationDrawerItemSelected(int position);
 	}
+
+	public class MenuAdapter extends BaseExpandableListAdapter {
+
+		private List<String> mGroups;
+
+		private class ViewHolder {
+			TextView textView;
+		}
+
+		public MenuAdapter() {
+
+		}
+
+		public void changeGroups(ArrayList<String> groups) {
+			mGroups = groups;
+		}
+
+		public void changeGroups(String... groups) {
+			mGroups = Arrays.asList(groups);
+		}
+
+		@Override
+		public int getGroupCount() {
+			return (mGroups == null) ? 0 : mGroups.size();
+		}
+
+		@Override
+		public int getChildrenCount(int groupPosition) {
+			return 0;
+		}
+
+		@Override
+		public String getGroup(int groupPosition) {
+			return mGroups.get(groupPosition);
+		}
+
+		@Override
+		public Object getChild(int groupPosition, int childPosition) {
+			return null;
+		}
+
+		@Override
+		public long getGroupId(int groupPosition) {
+			return 0;
+		}
+
+		@Override
+		public long getChildId(int groupPosition, int childPosition) {
+			return 0;
+		}
+
+		@Override
+		public boolean hasStableIds() {
+			return false;
+		}
+
+		@Override
+		public View getGroupView(int groupPosition, boolean isExpanded, View convertView,
+		                         ViewGroup parent) {
+			ViewHolder holder;
+			if (convertView == null) {
+				// Inflate
+				convertView = View.inflate(getActivity(), R.layout.elv_group, null);
+
+				// Save the ViewHolder for re-use
+				holder = new ViewHolder();
+				holder.textView = (TextView) convertView.findViewById(R.id.text_view);
+				convertView.setTag(holder);
+			} else {
+				holder = (ViewHolder) convertView.getTag();
+			}
+
+			holder.textView.setText(getGroup(groupPosition));
+			holder.textView.setBackgroundColor(Color.RED);
+
+			return convertView;
+		}
+
+		@Override
+		public View getChildView(int groupPosition, int childPosition, boolean isLastChild,
+		                         View convertView, ViewGroup parent) {
+			return null;
+		}
+
+		@Override
+		public boolean isChildSelectable(int groupPosition, int childPosition) {
+			return true;
+		}
+
+		@Override
+		public int getChildTypeCount() {
+			return 2;
+		}
+
+		@Override
+		public int getChildType(int groupPosition, int childPosition) {
+			// Stream = 0, effect = 1
+//			if () {
+//				return 0;
+//			} else {
+//				return 1;
+//			}
+			return 0;
+		}
+	}
+
 }
