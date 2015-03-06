@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<!--Set 1-->
+	<color name="indigo">#3F51B5</color>
+	<color name="light_green">#8BC34A</color>
+	<color name="orange">#FF9800</color>
+
+	<!--Set 2-->
+	<color name="blue_grey">#607D8B</color>
+	<color name="blue">#2196F3</color>
+	<color name="deep_purple">#673AB7</color>
+	<!--Set 3-->
+	<color name="teal">#009688</color>
+	<color name="lime">#CDDC39</color>
+	<color name="amber">#FFC107</color>
+</resources>

@@ -1,19 +1,20 @@
 package com.example.simas.collage;
 
-import android.content.Context;
-import android.database.Cursor;
-import android.graphics.Color;
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBarActivity;
 import android.app.Activity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,20 +22,18 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.BaseExpandableListAdapter;
-import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
-import android.widget.ListView;
-import android.widget.SimpleCursorTreeAdapter;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 /**
  * Fragment used for managing interactions for and presentation of a navigation drawer.
@@ -47,12 +46,15 @@ public class NavigationDrawerFragment extends Fragment {
 	 * Remember the position of the selected item.
 	 */
 	private static final String STATE_SELECTED_POSITION = "selected_navigation_drawer_position";
+	private static final String STATE_ADAPTER_PARCEL = "elv_adapter_parcel";
 
 	/**
 	 * Per the design guidelines, you should show the drawer on launch until the user manually
 	 * expands it. This shared preference tracks this.
 	 */
 	private static final String PREF_USER_LEARNED_DRAWER = "navigation_drawer_learned";
+
+	private MenuAdapter mAdapter;
 
 	/**
 	 * A pointer to the current callbacks instance (the Activity).
@@ -65,7 +67,7 @@ public class NavigationDrawerFragment extends Fragment {
 	private ActionBarDrawerToggle mDrawerToggle;
 
 	private DrawerLayout mDrawerLayout;
-	private ListView mDrawerListView;
+	private ExpandableListView mDrawerELV;
 	private View mFragmentContainerView;
 
 	private int mCurrentSelectedPosition = 0;
@@ -86,8 +88,12 @@ public class NavigationDrawerFragment extends Fragment {
 
 		if (savedInstanceState != null) {
 			mCurrentSelectedPosition = savedInstanceState.getInt(STATE_SELECTED_POSITION);
+			mAdapter = savedInstanceState.getParcelable(STATE_ADAPTER_PARCEL);
 			mFromSavedInstanceState = true;
-		}
+		} else {
+			mAdapter = new MenuAdapter(getActivity());
+			mAdapter.changeGroups("stream1", "stream2", "stream3", "stream4", "stream4",
+					"stream4","stream4","stream4","stream4","stream4","stream4");		}
 
 		// Select either the default item (0) or the last selected item.
 		selectItem(mCurrentSelectedPosition);
@@ -103,25 +109,30 @@ public class NavigationDrawerFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 	                         Bundle savedInstanceState) {
-		mDrawerListView = (ListView) inflater.inflate(
+		mDrawerELV = (ExpandableListView) inflater.inflate(
 				R.layout.fragment_navigation_drawer, container, false);
-		mDrawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+		mDrawerELV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				selectItem(position);
 			}
 		});
-		// Populate the drawer
-		ExpandableListView elv = (ExpandableListView) getActivity()
-				.findViewById(R.id.expandable_list_view);
 
-		View header = getLayoutInflater(null).inflate(R.layout.elv_header, null);
-		elv.addHeaderView(header);
+		LinearLayout headerLayout = (LinearLayout) inflater.inflate(R.layout.elv_header, null);
+		mDrawerELV.addHeaderView(headerLayout);
+		mDrawerELV.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
+			@Override
+			public void onGroupExpand(int groupPosition) {
+				Integer lastExpanded = mAdapter.lastExpandedGroup;
+				if (lastExpanded != null && lastExpanded != groupPosition) {
+					mDrawerELV.collapseGroup(lastExpanded);
+				}
+				mAdapter.lastExpandedGroup = groupPosition;
+			}
+		});
+		mDrawerELV.setAdapter(mAdapter);
 
-		MenuAdapter menuAdapter = new MenuAdapter();
-		menuAdapter.changeGroups("stream1", "effect", "stream2");
-		elv.setAdapter(menuAdapter);
-		return mDrawerListView;
+		return mDrawerELV;
 	}
 
 	public boolean isDrawerOpen() {
@@ -151,7 +162,6 @@ public class NavigationDrawerFragment extends Fragment {
 		mDrawerToggle = new ActionBarDrawerToggle(
 				getActivity(),                    /* host Activity */
 				mDrawerLayout,                    /* DrawerLayout object */
-				R.drawable.ic_drawer,             /* nav drawer image to replace 'Up' caret */
 				R.string.navigation_drawer_open,  /* "open drawer" description for accessibility */
 				R.string.navigation_drawer_close  /* "close drawer" description for accessibility */
 		) {
@@ -204,8 +214,8 @@ public class NavigationDrawerFragment extends Fragment {
 
 	private void selectItem(int position) {
 		mCurrentSelectedPosition = position;
-		if (mDrawerListView != null) {
-			mDrawerListView.setItemChecked(position, true);
+		if (mDrawerELV != null) {
+			mDrawerELV.setItemChecked(position, true);
 		}
 		if (mDrawerLayout != null) {
 			mDrawerLayout.closeDrawer(mFragmentContainerView);
@@ -235,6 +245,7 @@ public class NavigationDrawerFragment extends Fragment {
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		outState.putInt(STATE_SELECTED_POSITION, mCurrentSelectedPosition);
+		outState.putParcelable(STATE_ADAPTER_PARCEL, mAdapter);
 	}
 
 	@Override
@@ -276,7 +287,6 @@ public class NavigationDrawerFragment extends Fragment {
 	private void showGlobalContextActionBar() {
 		ActionBar actionBar = getActionBar();
 		actionBar.setDisplayShowTitleEnabled(true);
-		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
 		actionBar.setTitle(R.string.app_name);
 	}
 
@@ -292,111 +302,6 @@ public class NavigationDrawerFragment extends Fragment {
 		 * Called when an item in the navigation drawer is selected.
 		 */
 		void onNavigationDrawerItemSelected(int position);
-	}
-
-	public class MenuAdapter extends BaseExpandableListAdapter {
-
-		private List<String> mGroups;
-
-		private class ViewHolder {
-			TextView textView;
-		}
-
-		public MenuAdapter() {
-
-		}
-
-		public void changeGroups(ArrayList<String> groups) {
-			mGroups = groups;
-		}
-
-		public void changeGroups(String... groups) {
-			mGroups = Arrays.asList(groups);
-		}
-
-		@Override
-		public int getGroupCount() {
-			return (mGroups == null) ? 0 : mGroups.size();
-		}
-
-		@Override
-		public int getChildrenCount(int groupPosition) {
-			return 0;
-		}
-
-		@Override
-		public String getGroup(int groupPosition) {
-			return mGroups.get(groupPosition);
-		}
-
-		@Override
-		public Object getChild(int groupPosition, int childPosition) {
-			return null;
-		}
-
-		@Override
-		public long getGroupId(int groupPosition) {
-			return 0;
-		}
-
-		@Override
-		public long getChildId(int groupPosition, int childPosition) {
-			return 0;
-		}
-
-		@Override
-		public boolean hasStableIds() {
-			return false;
-		}
-
-		@Override
-		public View getGroupView(int groupPosition, boolean isExpanded, View convertView,
-		                         ViewGroup parent) {
-			ViewHolder holder;
-			if (convertView == null) {
-				// Inflate
-				convertView = View.inflate(getActivity(), R.layout.elv_group, null);
-
-				// Save the ViewHolder for re-use
-				holder = new ViewHolder();
-				holder.textView = (TextView) convertView.findViewById(R.id.text_view);
-				convertView.setTag(holder);
-			} else {
-				holder = (ViewHolder) convertView.getTag();
-			}
-
-			holder.textView.setText(getGroup(groupPosition));
-			holder.textView.setBackgroundColor(Color.RED);
-
-			return convertView;
-		}
-
-		@Override
-		public View getChildView(int groupPosition, int childPosition, boolean isLastChild,
-		                         View convertView, ViewGroup parent) {
-			return null;
-		}
-
-		@Override
-		public boolean isChildSelectable(int groupPosition, int childPosition) {
-			return true;
-		}
-
-		@Override
-		public int getChildTypeCount() {
-			return 2;
-		}
-
-		@Override
-		public int getChildType(int groupPosition, int childPosition) {
-			// Stream = 0, effect = 1
-//			if () {
-//				return 0;
-//			} else {
-//				return 1;
-//			}
-			return 0;
-		}
 	}
 
 }

@@ -14,8 +14,11 @@
 
 	<!--Single words-->
 	<string name="concatenation">Concatenation</string>
+	<string name="audio">Audio</string>
+	<string name="video">Video</string>
 
 	<!--Errors-->
+	<string name="error">Error</string>
 	<string name="app_dir_creation_failed">App directory creation failed!</string>
 	<string name="app_data_not_found">App data couldn\'t be found! Try re-installing the
 		app.</string>
@@ -23,8 +26,8 @@
 	<string name="formatted_action_interrupted">%s was interrupted! Please try again.</string>
 	<string name="at_least_2_videos">Must provide at least 2 videos!</string>
 	<string name="ffprobe_fail">Couldn\'t fetch information about this video</string>
-	<string name="error">Error</string>
-
-
-
+	<string name="start">Start:</string>
+	<string name="length">Length:</string>
+	<string name="end">End:&#160;&#160;</string>
+	<string name="semicolon">:</string>
 </resources>
