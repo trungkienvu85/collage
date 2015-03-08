@@ -1,20 +1,13 @@
-package com.example.simas.collage;
+package com.example.simas.collage.NavDrawer;
 
 import android.content.Context;
-import android.content.res.Configuration;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.text.InputType;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
 import android.widget.BaseExpandableListAdapter;
-import android.widget.EditText;
-import android.widget.ExpandableListView;
 import android.widget.TextView;
-
+import com.example.simas.collage.R;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -26,11 +19,9 @@ import java.util.Random;
  * Created by Simas Abramovas on 2015 Mar 06.
  */
 
-// ToDo kazkaip pratestint parceli
-// ToDo move cursor to the end on first EditText focus
-// ToDo Hide keyboard when other group expanded
+// ToDo kazkaip pratestint parceli!
 
-public class MenuAdapter extends BaseExpandableListAdapter implements Parcelable, View.OnFocusChangeListener {
+public class MenuAdapter extends BaseExpandableListAdapter implements Parcelable, View.OnClickListener {
 
 	public Context mContext;
 	private List<String> mGroups = new ArrayList<>();
@@ -75,27 +66,14 @@ public class MenuAdapter extends BaseExpandableListAdapter implements Parcelable
 		lastExpandedGroup = (Integer) parcel.readSerializable(); // ToDo r u sure
 	}
 
-	/* Place cursor on the end when EditText selected */
-	@Override
-	public void onFocusChange(View v, boolean hasFocus) {
-		if (hasFocus) {
-			EditText et = (EditText) v;
-			et.setSelection(et.getText().length());
-		}
-	}
-
-
 	private static class GroupViewHolder {
 		TextView name;
 	}
 
 	private static class ChildViewHolder {
-		TextView from_min;
-		TextView from_sec;
-		TextView duration_min;
-		TextView duration_sec;
-		TextView to_min;
-		TextView to_sec;
+		TextView start;
+		TextView duration;
+		TextView end;
 	}
 
 	/**
@@ -210,18 +188,12 @@ public class MenuAdapter extends BaseExpandableListAdapter implements Parcelable
 			convertView = View.inflate(getContext(), R.layout.elv_child, null);
 			// Save the ViewHolder for re-use
 			holder = new ChildViewHolder();
-			holder.from_min = (TextView) convertView.findViewById(R.id.start_time_min);
-			holder.from_min.setSelectAllOnFocus(true);
-			holder.from_sec = (TextView) convertView.findViewById(R.id.start_time_sec);
-			holder.from_sec.setSelectAllOnFocus(true);
-			holder.duration_min = (TextView) convertView.findViewById(R.id.duration_min);
-			holder.duration_min.setSelectAllOnFocus(true);
-			holder.duration_sec = (TextView) convertView.findViewById(R.id.duration_sec);
-			holder.duration_sec.setSelectAllOnFocus(true);
-			holder.to_min = (TextView) convertView.findViewById(R.id.end_time_min);
-			holder.to_min.setSelectAllOnFocus(true);
-			holder.to_sec = (TextView) convertView.findViewById(R.id.end_time_sec);
-			holder.to_sec.setSelectAllOnFocus(true);
+			holder.start = (TextView) convertView.findViewById(R.id.start_time);
+			convertView.findViewById(R.id.start).setOnClickListener(this);
+			holder.duration = (TextView) convertView.findViewById(R.id.duration_time);
+			convertView.findViewById(R.id.duration).setOnClickListener(this);
+			holder.end = (TextView) convertView.findViewById(R.id.end_time);
+			convertView.findViewById(R.id.end).setOnClickListener(this);
 			convertView.setTag(holder);
 		} else {
 			holder = (ChildViewHolder) convertView.getTag();
@@ -236,8 +208,25 @@ public class MenuAdapter extends BaseExpandableListAdapter implements Parcelable
 	}
 
 	@Override
+	public void onClick(View v) {
+		switch (v.getId()) {
+			case R.id.start:
+				new TimeChanger(getContext(), R.string.start_changer, (ViewGroup) v);
+				break;
+			case R.id.duration:
+				new TimeChanger(getContext(), R.string.duration_changer, (ViewGroup) v);
+				break;
+			case R.id.end:
+				new TimeChanger(getContext(), R.string.end_changer, (ViewGroup) v);
+				break;
+			default:
+				throw new IllegalArgumentException("Unexpected argument in the click listener!");
+		}
+	}
+
+	@Override
 	public boolean isChildSelectable(int groupPosition, int childPosition) {
-		return true;
+		return false;
 	}
 
 	@Override

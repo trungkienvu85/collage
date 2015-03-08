@@ -1,8 +1,6 @@
-package com.example.simas.collage;
+package com.example.simas.collage.NavDrawer;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-import android.support.annotation.Nullable;
+import android.content.Context;
 import android.support.v7.app.ActionBarActivity;
 import android.app.Activity;
 import android.support.v7.app.ActionBar;
@@ -14,26 +12,19 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import com.example.simas.collage.R;
 
 /**
  * Fragment used for managing interactions for and presentation of a navigation drawer.
@@ -123,16 +114,32 @@ public class NavigationDrawerFragment extends Fragment {
 		mDrawerELV.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
 			@Override
 			public void onGroupExpand(int groupPosition) {
+				// Hide the keyboard
+				hideKeyboard();
+
+				// Collapse previous group (if any)
 				Integer lastExpanded = mAdapter.lastExpandedGroup;
 				if (lastExpanded != null && lastExpanded != groupPosition) {
 					mDrawerELV.collapseGroup(lastExpanded);
 				}
+				// Save the groupPos (to collapse later if needed)
 				mAdapter.lastExpandedGroup = groupPosition;
 			}
 		});
 		mDrawerELV.setAdapter(mAdapter);
 
 		return mDrawerELV;
+	}
+
+	private void hideKeyboard() {
+		// Check if no view has focus:
+		View view = getActivity().getCurrentFocus();
+		if (view != null) {
+			InputMethodManager inputManager = (InputMethodManager) getActivity()
+					.getSystemService(Context.INPUT_METHOD_SERVICE);
+			inputManager.hideSoftInputFromWindow(view.getWindowToken(),
+					InputMethodManager.HIDE_NOT_ALWAYS);
+		}
 	}
 
 	public boolean isDrawerOpen() {

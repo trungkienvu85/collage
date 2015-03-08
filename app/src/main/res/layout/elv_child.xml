@@ -5,8 +5,9 @@
 	android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="3dp">
+    android:padding="5dp">
 	<LinearLayout
+		android:id="@+id/start"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:orientation="horizontal"
@@ -15,41 +16,22 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_gravity="center"
-			android:textSize="18sp"
+			android:textSize="20sp"
 			android:text="@string/start"/>
 
-		<EditText
-			android:id="@+id/start_time_min"
-			android:text="00"
-			android:includeFontPadding="false"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:padding="3dp"
-			android:inputType="numberSigned"
-			android:nextFocusDown="@+id/start_time_sec"
-			android:nextFocusRight="@+id/start_time_sec"
-			android:nextFocusForward="@+id/start_time_sec"
-			tools:ignore="UnusedAttribute"/>
-
 		<TextView
+			android:id="@+id/start_time"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_gravity="center"
-			android:textSize="18sp"
-			android:text="@string/semicolon"/>
-
-		<EditText
-			android:id="@+id/start_time_sec"
-			android:text="00"
-			android:includeFontPadding="false"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:padding="3dp"
-			android:inputType="numberSigned"
-			android:imeOptions="actionDone"/>
+			android:textSize="20sp"
+			android:paddingLeft="5dp"
+			android:paddingStart="5dp"
+			tools:ignore="NewApi,RtlSymmetry"/>
 	</LinearLayout>
 
 	<LinearLayout
+		android:id="@+id/duration"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:orientation="horizontal"
@@ -61,37 +43,19 @@
 			android:textSize="18sp"
 			android:text="@string/length"/>
 
-		<EditText
-			android:id="@+id/duration_min"
-			android:text="01"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:padding="3dp"
-			android:inputType="numberSigned"
-			android:nextFocusDown="@+id/duration_sec"
-			android:nextFocusRight="@+id/duration_sec"
-			android:nextFocusForward="@+id/duration_sec"
-			tools:ignore="UnusedAttribute"/>
-
 		<TextView
+			android:id="@+id/duration_time"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_gravity="center"
-			android:textSize="18sp"
-			android:text="@string/semicolon"/>
-
-		<EditText
-			android:id="@+id/duration_sec"
-			android:text="30"
-			android:includeFontPadding="false"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:padding="3dp"
-			android:inputType="numberSigned"
-			android:imeOptions="actionDone"/>
+			android:textSize="20sp"
+			android:paddingLeft="5dp"
+			android:paddingStart="5dp"
+			tools:ignore="NewApi,RtlSymmetry"/>
 	</LinearLayout>
 
 	<LinearLayout
+		android:id="@+id/end"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:orientation="horizontal"
@@ -100,37 +64,17 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_gravity="center"
-			android:textSize="18sp"
+			android:textSize="20sp"
 			android:text="@string/end"/>
 
-		<EditText
-			android:id="@+id/end_time_min"
-			android:text="01"
-			android:includeFontPadding="false"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:padding="3dp"
-			android:inputType="numberSigned"
-			android:nextFocusDown="@+id/end_time_sec"
-			android:nextFocusRight="@+id/end_time_sec"
-			android:nextFocusForward="@+id/end_time_sec"
-			tools:ignore="UnusedAttribute"/>
-
 		<TextView
+			android:id="@+id/end_time"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_gravity="center"
-			android:textSize="18sp"
-			android:text="@string/semicolon"/>
-
-		<EditText
-			android:id="@+id/end_time_sec"
-			android:text="30"
-			android:includeFontPadding="false"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:padding="3dp"
-			android:inputType="numberSigned"
-			android:imeOptions="actionDone"/>
+			android:textSize="20sp"
+			android:paddingLeft="5dp"
+			android:paddingStart="5dp"
+			tools:ignore="NewApi,RtlSymmetry"/>
 	</LinearLayout>
 </LinearLayout>
