@@ -3,6 +3,8 @@ package com.example.simas.collage.NavDrawer;
 import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
@@ -19,11 +21,15 @@ import java.util.Random;
  * Created by Simas Abramovas on 2015 Mar 06.
  */
 
-// ToDo kazkaip pratestint parceli!
+// ToDo kazkaip pratestint parcel creator. Ar neimanoma, nes bundle pats readina fieldus?
+// ToDo start/end/length - buttons
+// ToDo show that time is editable (underline?)
 
 public class MenuAdapter extends BaseExpandableListAdapter implements Parcelable, View.OnClickListener {
 
-	public Context mContext;
+	private static final String TAG = "MenuAdapter";
+	private Context mContext;
+	private LayoutInflater mInflater;
 	private List<String> mGroups = new ArrayList<>();
 	private List<List<Integer>> mColorSets = new ArrayList<>();
 	private Map<Integer, Integer> mGroupColors = new HashMap<>();
@@ -31,7 +37,6 @@ public class MenuAdapter extends BaseExpandableListAdapter implements Parcelable
 	private Random mRandom = new Random(System.currentTimeMillis());
 
 	/* Parcelable */
-
 	@Override
 	public int describeContents() {
 		return 0;
@@ -80,8 +85,13 @@ public class MenuAdapter extends BaseExpandableListAdapter implements Parcelable
 	 * Default constructor, creating an empty adapter
 	 */
 	public MenuAdapter(Context context) {
-		mContext = context;
+		initForContext(context);
 		createColorSets();
+	}
+
+	public void initForContext(Context ctx) {
+		mContext = ctx;
+		mInflater = LayoutInflater.from(mContext);
 	}
 
 	private void createColorSets() {
@@ -96,8 +106,12 @@ public class MenuAdapter extends BaseExpandableListAdapter implements Parcelable
 		}
 	}
 
-	public Context getContext() {
+	private Context getContext() {
 		return mContext;
+	}
+
+	private LayoutInflater getInflater() {
+		return mInflater;
 	}
 
 	public void changeGroups(List<String> groups) {
@@ -164,7 +178,7 @@ public class MenuAdapter extends BaseExpandableListAdapter implements Parcelable
 		GroupViewHolder holder;
 		if (convertView == null) {
 			// Inflate
-			convertView = View.inflate(getContext(), R.layout.elv_group, null);
+			convertView = getInflater().inflate(R.layout.elv_group, parent, false);
 			// Save the ViewHolder for re-use
 			holder = new GroupViewHolder();
 			holder.name = (TextView) convertView.findViewById(R.id.text_view);
@@ -185,7 +199,7 @@ public class MenuAdapter extends BaseExpandableListAdapter implements Parcelable
 		ChildViewHolder holder;
 		if (convertView == null) {
 			// Inflate
-			convertView = View.inflate(getContext(), R.layout.elv_child, null);
+			convertView = getInflater().inflate(R.layout.elv_child, parent, false);
 			// Save the ViewHolder for re-use
 			holder = new ChildViewHolder();
 			holder.start = (TextView) convertView.findViewById(R.id.start_time);
@@ -231,7 +245,7 @@ public class MenuAdapter extends BaseExpandableListAdapter implements Parcelable
 
 	@Override
 	public int getChildTypeCount() {
-		return 2;
+		return 1;
 	}
 
 	@Override

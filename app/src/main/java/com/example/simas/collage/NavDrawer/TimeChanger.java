@@ -31,26 +31,6 @@ public class TimeChanger {
 
 	public TimeChanger(Context context, int titleResId, ViewGroup container) {
 		View contentView = View.inflate(context, R.layout.time_dialog, null);
-		AlertDialog.Builder builder = new AlertDialog.Builder(context)
-				.setTitle(titleResId)
-				.setView(contentView)
-				.setPositiveButton("okay", null)
-//				.setNegativeButton()
-				.setOnCancelListener(new DialogInterface.OnCancelListener() {
-					@Override
-					public void onCancel(DialogInterface dialog) {
-						updateTime();
-					}
-				});
-
-		if (Build.VERSION.SDK_INT >= 17) {
-			builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
-				@Override
-				public void onDismiss(DialogInterface dialog) {
-					updateTime();
-				}
-			});
-		}
 
 		mMinPicker = (NumberPicker) contentView.findViewById(R.id.min);
 		mMinPicker.setMaxValue(60);
@@ -75,7 +55,16 @@ public class TimeChanger {
 			}
 		}
 
-		builder.create().show();
+		new AlertDialog.Builder(context)
+				.setTitle(titleResId)
+				.setView(contentView)
+				.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						updateTime();
+					}
+				})
+				.show();
 	}
 
 	private void updateTime() {

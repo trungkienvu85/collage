@@ -12,6 +12,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -23,7 +24,6 @@ import android.widget.AdapterView;
 import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
-
 import com.example.simas.collage.R;
 
 /**
@@ -44,6 +44,7 @@ public class NavigationDrawerFragment extends Fragment {
 	 * expands it. This shared preference tracks this.
 	 */
 	private static final String PREF_USER_LEARNED_DRAWER = "navigation_drawer_learned";
+	private static final String TAG = "NavDrawerFragment";
 
 	private MenuAdapter mAdapter;
 
@@ -79,12 +80,17 @@ public class NavigationDrawerFragment extends Fragment {
 
 		if (savedInstanceState != null) {
 			mCurrentSelectedPosition = savedInstanceState.getInt(STATE_SELECTED_POSITION);
+			// Recall the state of the adapter, only the context changes
 			mAdapter = savedInstanceState.getParcelable(STATE_ADAPTER_PARCEL);
+			mAdapter.initForContext(getActivity());
+
 			mFromSavedInstanceState = true;
 		} else {
 			mAdapter = new MenuAdapter(getActivity());
-			mAdapter.changeGroups("stream1", "stream2", "stream3", "stream4", "stream4",
-					"stream4","stream4","stream4","stream4","stream4","stream4");		}
+			mAdapter.changeGroups("Video1", "Fade Effect", "Video2", "Video3");
+//			mAdapter.changeGroups("stream1", "stream2", "stream3", "stream4", "stream4",
+//					"stream4","stream4","stream4","stream4","stream4","stream4");
+		}
 
 		// Select either the default item (0) or the last selected item.
 		selectItem(mCurrentSelectedPosition);
@@ -100,6 +106,7 @@ public class NavigationDrawerFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 	                         Bundle savedInstanceState) {
+		Log.e(TAG, "create view " + mDrawerELV);
 		mDrawerELV = (ExpandableListView) inflater.inflate(
 				R.layout.fragment_navigation_drawer, container, false);
 		mDrawerELV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -279,8 +286,8 @@ public class NavigationDrawerFragment extends Fragment {
 			return true;
 		}
 
-		if (item.getItemId() == R.id.action_example) {
-			Toast.makeText(getActivity(), "Example action.", Toast.LENGTH_SHORT).show();
+		if (item.getItemId() == R.id.action_add_video) {
+			Toast.makeText(getActivity(), "Select a video", Toast.LENGTH_SHORT).show();
 			return true;
 		}
 

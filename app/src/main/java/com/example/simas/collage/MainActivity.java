@@ -51,15 +51,7 @@ public class MainActivity extends ActionBarActivity
 		mNavigationDrawerFragment.setUp(R.id.navigation_drawer,
 				(DrawerLayout) findViewById(R.id.drawer_layout));
 
-//		try {
-//			AssetFileDescriptor afd = getAssets().openFd("ffmpeg");
-//		} catch (FileNotFoundException e) {
-//			e.printStackTrace();
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-
-		HandlerThread thread = new HandlerThread("MyHandlerThread");
+		HandlerThread thread = new HandlerThread("FFmpeg thread");
 		thread.start();
 		Handler handler = new Handler(thread.getLooper());
 		Runnable task = new Runnable() {
@@ -199,6 +191,18 @@ public class MainActivity extends ActionBarActivity
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 		                         Bundle savedInstanceState) {
 			View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+
+			final View preview = rootView.findViewById(R.id.preview);
+			final View parent = rootView.findViewById(R.id.preview_container);
+
+			parent.post(new Runnable() {
+				@Override
+				public void run() {
+					ViewGroup.LayoutParams params = preview.getLayoutParams();
+					params.width = Math.min(parent.getHeight(), parent.getWidth());
+					preview.setLayoutParams(params);
+				}
+			});
 			return rootView;
 		}
 

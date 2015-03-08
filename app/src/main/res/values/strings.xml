@@ -33,5 +33,8 @@
 	<string name="start_changer">Change the start time</string>
 	<string name="duration_changer">Change the duration</string>
 	<string name="end_changer">Change the end time</string>
-	<string name="arrow_content_descriptor">arrow</string>
+	<string name="timeline_arrow_descriptor">arrow</string>
+	<string name="timeline_line_descriptor">line</string>
+	<string name="ok">OKAY</string>
+	<string name="action_add_video">Add video</string>
 </resources>
